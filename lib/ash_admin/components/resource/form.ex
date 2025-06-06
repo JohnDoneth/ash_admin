@@ -1879,7 +1879,8 @@ defmodule AshAdmin.Components.Resource.Form do
 
   defp consume_file_uploads(socket) do
     uploaded_files =
-      socket.assigns.uploads
+      socket.assigns
+      |> Map.get(:uploads, %{})
       |> Enum.filter(fn {_, upload_config} ->
         is_struct(upload_config, Phoenix.LiveView.UploadConfig)
       end)
