@@ -150,12 +150,11 @@ defmodule AshAdmin.Components.Resource.Form do
             />
             {render_attributes(assigns, @resource, @action, form)}
             <div class="flex pt-3 justify-end">
-              <button
+              <.button
                 type="submit"
-                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
               >
                 {save_button_text(@type)}
-              </button>
+              </.button>
             </div>
           </.form>
         </div>
@@ -728,7 +727,7 @@ defmodule AshAdmin.Components.Resource.Form do
     <%= if @uploaded_file do %>
       <div class="flex items-center justify-between mt-2 w-full rounded-lg border border-zinc-300 text-zinc-900 text-sm overflow-hidden">
         <span class="px-2 py-2.5">{Path.basename(@uploaded_file.source)}</span>
-        <button
+        <.button
           type="button"
           phx-click="remove_upload"
           phx-target={@myself}
@@ -736,7 +735,7 @@ defmodule AshAdmin.Components.Resource.Form do
           class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200"
         >
           <.icon name="hero-minus" class="h-4 w-4" />
-        </button>
+        </.button>
       </div>
     <% else %>
       <div phx-drop-target={@upload.ref}>

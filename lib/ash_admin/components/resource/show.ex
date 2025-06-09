@@ -50,7 +50,7 @@ defmodule AshAdmin.Components.Resource.Show do
           {@title}
         </.page_title>
 
-        <button
+        <.button
           :if={AshAdmin.Resource.actor?(@resource)}
           class="float-right pt-4 pr-4"
           phx-click="set_actor"
@@ -59,7 +59,7 @@ defmodule AshAdmin.Components.Resource.Show do
           phx-value-pkey={encode_primary_key(@record)}
         >
           <.icon name="hero-key" class="h-5 w-5 text-gray-500" />
-        </button>
+        </.button>
         <div>
           <div>
             {render_attributes(assigns, @record, @resource)}
@@ -132,12 +132,9 @@ defmodule AshAdmin.Components.Resource.Show do
               {inspect(@calculation_errors[calculation.name])}
             </.error>
             <div class="px-4 py-3 text-right sm:px-6 text-right">
-              <button
-                type="submit"
-                class="py-2 px-4 mt-2 bg-indigo-600 text-white border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-              >
+              <.button type="submit">
                 Calculate
-              </button>
+              </.button>
             </div>
           </.form>
         </div>
@@ -157,26 +154,24 @@ defmodule AshAdmin.Components.Resource.Show do
       <div class="px-4 py-5 mt-2">
         <div>
           {to_name(relationship.name)}
-          <button
+          <.button
             :if={!loaded?(@record, relationship.name)}
             phx-click="load"
             phx-target={@myself}
             phx-value-relationship={relationship.name}
             type="button"
-            class="flex py-2 ml-4 px-4 mt-2 bg-indigo-600 text-white border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
           >
             Load
-          </button>
-          <button
+          </.button>
+          <.button
             :if={loaded?(@record, relationship.name) && relationship.cardinality == :many}
             phx-click="unload"
             phx-target={@myself}
             phx-value-relationship={relationship.name}
             type="button"
-            class="flex py-2 ml-4 px-4 mt-2 bg-indigo-600 text-white border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
           >
             Unload
-          </button>
+          </.button>
 
           <div :if={loaded?(@record, relationship.name)}>
             {render_relationship_data(assigns, @record, relationship)}

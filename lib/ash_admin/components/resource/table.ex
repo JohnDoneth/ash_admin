@@ -63,7 +63,7 @@ defmodule AshAdmin.Components.Resource.Table do
                   </.link>
                 </div>
 
-                <button
+                <.button
                   :if={AshAdmin.Resource.actor?(@resource)}
                   phx-click="set_actor"
                   phx-value-resource={@resource}
@@ -71,7 +71,7 @@ defmodule AshAdmin.Components.Resource.Table do
                   phx-value-pkey={encode_primary_key(record)}
                 >
                   <.icon name="hero-key-solid" class="h-5 w-5 text-gray-500" />
-                </button>
+                </.button>
               </div>
             </td>
           </tr>

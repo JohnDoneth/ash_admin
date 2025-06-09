@@ -84,11 +84,7 @@ defmodule AshAdmin.Components.TopNav do
             </div>
           </div>
           <div class="-mr-2 flex md:hidden">
-            <button
-              phx-click="toggle"
-              phx-target={@myself}
-              class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white"
-            >
+            <.button phx-click="toggle" phx-target={@myself}>
               <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path
                   class={classes("inline-flex": !@open, hidden: @open)}
@@ -105,7 +101,7 @@ defmodule AshAdmin.Components.TopNav do
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
+            </.button>
           </div>
         </div>
       </div>

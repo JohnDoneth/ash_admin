@@ -352,8 +352,8 @@ select {
   .-m-3 {
     margin: calc(var(--spacing) * -3) !important;
   }
-  .m-2 {
-    margin: calc(var(--spacing) * 2) !important;
+  .m-0 {
+    margin: calc(var(--spacing) * 0) !important;
   }
   .m-5 {
     margin: calc(var(--spacing) * 5) !important;
@@ -715,9 +715,6 @@ select {
   .h-16 {
     height: calc(var(--spacing) * 16) !important;
   }
-  .h-\[��\17 ���N��\,\e U�A�\16 �f�\1d ���\] {
-    height: �����N��,U�A��f���� !important;
-  }
   .h-full {
     height: 100% !important;
   }
@@ -1061,9 +1058,6 @@ select {
   }
   .p-0 {
     padding: calc(var(--spacing) * 0) !important;
-  }
-  .p-1 {
-    padding: calc(var(--spacing) * 1) !important;
   }
   .p-2 {
     padding: calc(var(--spacing) * 2) !important;
@@ -1762,11 +1756,6 @@ select {
       @media (hover: hover) {
         opacity: 40% !important;
       }
-    }
-  }
-  .focus\:border-indigo-500 {
-    &:focus {
-      border-color: var(--color-indigo-500) !important;
     }
   }
   .focus\:border-rose-400 {
