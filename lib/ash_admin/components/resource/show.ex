@@ -20,7 +20,7 @@ defmodule AshAdmin.Components.Resource.Show do
 
   def render(assigns) do
     ~H"""
-    <div class="md:pt-10 sm:mt-0 bg-gray-300 min-h-screen pb-20">
+    <div class="md:pt-10 sm:mt-0 bg-gray-300 pb-20">
       <div class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
         <div class="mt-5 md:mt-0 md:col-span-2">
           {render_show(assigns, @record, @resource)}
@@ -44,41 +44,46 @@ defmodule AshAdmin.Components.Resource.Show do
     assigns = assign(assigns, record: record, resource: resource, title: title, buttons: buttons?)
 
     ~H"""
-    <div class="shadow-lg overflow-hidden sm:rounded-md bg-white">
-      <h1 :if={@title} class="pt-2 pl-4 text-lg">{@title}</h1>
-      <button
-        :if={AshAdmin.Resource.actor?(@resource)}
-        class="float-right pt-4 pr-4"
-        phx-click="set_actor"
-        phx-value-resource={@resource}
-        phx-value-domain={@domain}
-        phx-value-pkey={encode_primary_key(@record)}
-      >
-        <.icon name="hero-key" class="h-5 w-5 text-gray-500" />
-      </button>
-      <div class="px-4 py-5 sm:p-6">
-        <div>
-          {render_attributes(assigns, @record, @resource)}
-          <div :if={@buttons} class="px-4 py-3 text-right sm:px-6">
-            <.link
-              :if={destroy?(@resource)}
-              navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=destroy&table=#{@table}&primary_key=#{encode_primary_key(@record)}"}
-              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Destroy
-            </.link>
+    <.card>
+      <div class="p-8">
+        <.page_title :if={@title} class="mb-4">
+          {@title}
+        </.page_title>
 
-            <.link
-              :if={update?(@resource)}
-              navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=update&table=#{@table}&primary_key=#{encode_primary_key(@record)}"}
-              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Update
-            </.link>
+        <button
+          :if={AshAdmin.Resource.actor?(@resource)}
+          class="float-right pt-4 pr-4"
+          phx-click="set_actor"
+          phx-value-resource={@resource}
+          phx-value-domain={@domain}
+          phx-value-pkey={encode_primary_key(@record)}
+        >
+          <.icon name="hero-key" class="h-5 w-5 text-gray-500" />
+        </button>
+        <div>
+          <div>
+            {render_attributes(assigns, @record, @resource)}
+            <div :if={@buttons} class="px-4 py-3 text-right sm:px-6">
+              <.link
+                :if={destroy?(@resource)}
+                navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=destroy&table=#{@table}&primary_key=#{encode_primary_key(@record)}"}
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Destroy
+              </.link>
+
+              <.link
+                :if={update?(@resource)}
+                navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=update&table=#{@table}&primary_key=#{encode_primary_key(@record)}"}
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Update
+              </.link>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </.card>
     """
   end
 
@@ -316,7 +321,7 @@ defmodule AshAdmin.Components.Resource.Show do
           ])
         }
       >
-        <div class="block text-sm font-medium text-gray-700">{to_name(attribute.name)}</div>
+        <.attribute_name attribute={attribute} />
         <div>
           {render_maybe_sensitive_attribute(
             assigns,
@@ -329,9 +334,7 @@ defmodule AshAdmin.Components.Resource.Show do
       </div>
     </div>
     <div :if={!Enum.empty?(@flags)} class="hidden sm:block" aria-hidden="true">
-      <div class="py-5">
-        <div class="border-t border-gray-200" />
-      </div>
+      <.separator />
     </div>
     <div :if={!Enum.empty?(@flags)} class="grid grid-cols-6 gap-6">
       <div
@@ -344,7 +347,7 @@ defmodule AshAdmin.Components.Resource.Show do
           ])
         }
       >
-        <div class="block text-sm font-medium text-gray-700">{to_name(attribute.name)}</div>
+        <.attribute_name attribute={attribute} />
         <div>
           {render_maybe_sensitive_attribute(
             assigns,
@@ -357,9 +360,7 @@ defmodule AshAdmin.Components.Resource.Show do
       </div>
     </div>
     <div :if={!Enum.empty?(@bottom_attributes)} class="hidden sm:block" aria-hidden="true">
-      <div class="py-5">
-        <div class="border-t border-gray-200" />
-      </div>
+      <.separator />
     </div>
     <div :if={!Enum.empty?(@bottom_attributes)} class="grid grid-cols-6 gap-6">
       <div
@@ -373,7 +374,7 @@ defmodule AshAdmin.Components.Resource.Show do
           ])
         }
       >
-        <div class="block text-sm font-medium text-gray-700">{to_name(attribute.name)}</div>
+        <.attribute_name attribute={attribute} />
         <div>
           {render_maybe_sensitive_attribute(
             assigns,
@@ -646,26 +647,31 @@ defmodule AshAdmin.Components.Resource.Show do
           Ash.Type.String ->
             cond do
               short_text?(resource, attribute) ->
-                value!(Map.get(record, attribute.name))
+                ~H"""
+                {value!(Map.get(record, attribute.name))}
+                """
 
               long_text?(resource, attribute) ->
                 ~H"""
-                <textarea
+                <.input
+                  type="textarea"
                   rows="3"
                   cols="40"
                   disabled
-                  class="resize-y mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                ><%= value!(Map.get(@record, @attribute.name)) %></textarea>
+                  value={value!(Map.get(@record, @attribute.name))}
+                />
                 """
 
               true ->
                 ~H"""
-                <textarea
+                <.input
+                  type="textarea"
                   rows="1"
                   cols="20"
+                  name={@attribute.name}
                   disabled
-                  class="resize-y mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                ><%= value!(Map.get(@record, @attribute.name)) %></textarea>
+                  value={value!(Map.get(@record, @attribute.name))}
+                />
                 """
             end
 

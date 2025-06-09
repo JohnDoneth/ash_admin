@@ -12,13 +12,16 @@ defmodule AshAdmin.Components.Resource.Nav do
 
   def nav(assigns) do
     ~H"""
-    <nav class="bg-gray-800 w-full">
+    <nav class="bg-black w-full">
       <div class="px-4 sm:px-6 lg:px-8 w-full">
         <div class="flex items-center justify-between h-16 w-full">
           <div class="flex items-center w-full">
             <div class="flex-shrink-0">
               <h3 class="text-white text-lg">
-                <.link navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}"}>
+                <.link
+                  navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}"}
+                  class="font-display font-bold tracking-wide"
+                >
                   {AshAdmin.Resource.name(@resource)}
                 </.link>
               </h3>
@@ -30,9 +33,8 @@ defmodule AshAdmin.Components.Resource.Nav do
                     navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=create&action=#{create_action(@resource).name}&table=#{@table}"}
                     class={
                       classes([
-                        "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500",
-                        "bg-gray-800 hover:bg-gray-900 text-white":
-                          @action && @action.type == :create,
+                        "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 dark:border-surface-500 dark:bg-surface-800",
+                        "bg-black hover:bg-gray-900 text-white": @action && @action.type == :create,
                         "bg-white text-gray-700 hover:bg-gray-300":
                           !@action || @action.type != :create
                       ])

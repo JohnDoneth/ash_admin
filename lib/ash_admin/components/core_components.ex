@@ -17,6 +17,8 @@ defmodule AshAdmin.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: AshAdmin.Gettext
 
+  import AshAdmin.Helpers
+
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -225,13 +227,66 @@ defmodule AshAdmin.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "flex py-2 h-10 w-full mt-2 inline-flex justify-center w-full
+        rounded-lg border border-surface-300 shadow-sm px-4 py-2 text-sm font-medium dark:border-surface-600
+        dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
+        items-center hover:bg-surface-50",
         @class
       ]}
       {@rest}
     >
       {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  attr :attribute, :any, required: true
+  attr :form, :any, required: true
+
+  def attribute_label(assigns) do
+    ~H"""
+    <label
+      class="block text-sm font-medium tracking-wide mt-4"
+      for={@form.name <> "[#{@attribute.name}]"}
+    >
+      {to_name(@attribute)}
+    </label>
+    """
+  end
+
+  attr :argument, :any, required: true
+  attr :form, :any, required: true
+
+  def argument_label(assigns) do
+    ~H"""
+    <label class="block text-sm font-medium" for={@form.name <> "[#{@argument.name}]"}>
+      {to_name(@argument.name)}
+    </label>
+    """
+  end
+
+  attr :attribute, :any, required: true
+  attr :form, :any, required: true
+
+  def attribute_name(assigns) do
+    ~H"""
+    <div class="block text-sm font-medium text-surface-700">{to_name(@attribute.name)}</div>
+    """
+  end
+
+  attr :rest, :global, include: ~w(disabled form name value)
+
+  def small_remove_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class="flex ml-1 h-10 w-10 mt-2 border-gray-600 hover:bg-gray-400 border rounded-md justify-center items-center
+            shadow-sm rounded-lg border border-surface-300 font-medium dark:border-surface-600
+            dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
+            hover:bg-surface-50"
+      {@rest}
+    >
+      <.icon name="hero-minus" class="h-4 w-4" />
     </button>
     """
   end
@@ -279,6 +334,7 @@ defmodule AshAdmin.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :class, :string, default: "", doc: "additional CSS classes for the input"
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
@@ -303,18 +359,27 @@ defmodule AshAdmin.CoreComponents do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
-        <input type="hidden" name={@name} value="false" />
+      <label class="inline-flex items-center cursor-pointer">
         <input
           type="checkbox"
           id={@id}
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class="sr-only peer"
           {@rest}
         />
-        {@label}
+        <div class={"#{@class} relative w-11 h-6 bg-surface-200 peer-focus:outline-none
+        peer-focus:ring-1
+        peer-focus:ring-offset-2
+         peer-focus:ring-black dark:peer-focus:ring-white
+         rounded-full peer dark:bg-surface-700 peer-checked:after:translate-x-full
+        rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white
+        after:content-[''] after:absolute after:top-[2px] after:start-[2px]
+        after:bg-white after:border-surface-300 after:border after:rounded-full
+        after:h-5 after:w-5 after:transition-all dark:border-surface-600
+        peer-checked:bg-brand dark:peer-checked:bg-brand"}>
+        </div>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -328,7 +393,12 @@ defmodule AshAdmin.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class="w-full p-2.5 mt-2 block w-full rounded-lg border border-surface-300
+         shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm
+         hover:bg-surface-50
+         dark:bg-surface-800
+          dark:border-surface-600 dark:hover:bg-surface-700 dark:focus:bg-surface-700
+        "
         multiple={@multiple}
         {@rest}
       >
@@ -348,7 +418,7 @@ defmodule AshAdmin.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
+          "mt-2 p-2 block w-full rounded-lg border focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
@@ -370,13 +440,37 @@ defmodule AshAdmin.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6
+          tracking-widest border dark:border-surface-700 p-2 dark:bg-surface-800 dark:[color-scheme:dark]
+          hover:border-surface-500
+          ",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
       />
       <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  def separator(assigns) do
+    ~H"""
+    <div class="py-5">
+      <div class="border-t border-surface-200 dark:border-surface-500" />
+    </div>
+    """
+  end
+
+  def depth_marker(assigns) do
+    ~H"""
+    <div class="border-s-3
+            border-surface-200 hover:border-surface-400 focus-within:border-surface-400
+            dark:border-surface-800 dark:hover:border-surface-600 dark:focus-within:border-surface-600
+
+
+            transition-colors duration-200 pl-2 mb-2 mt-2 dark:hover:border-surface-400">
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -389,7 +483,7 @@ defmodule AshAdmin.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6">
       {render_slot(@inner_block)}
     </label>
     """
@@ -402,7 +496,7 @@ defmodule AshAdmin.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
+    <p class="mb-3 flex gap-3 text-sm leading-6 text-rose-600">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
       {render_slot(@inner_block)}
     </p>
@@ -588,6 +682,46 @@ defmodule AshAdmin.CoreComponents do
     """
   end
 
+  attr :rest, :global
+  attr :label, :string, required: true
+  attr :class, :string, default: "", doc: "additional CSS classes for the button"
+
+  def add_item_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class={"
+        #{@class} flex py-2 h-10 w-full mt-2 inline-flex justify-center w-full
+        rounded-lg border border-surface-300 shadow-sm px-4 py-2 text-sm font-medium dark:border-surface-600
+        dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
+        items-center hover:bg-surface-50"}
+      {@rest}
+    >
+      <.icon name="hero-plus" class="h-4 w-4 mr-1" />{@label}
+    </button>
+    """
+  end
+
+  attr :rest, :global
+  attr :label, :string, required: true
+  attr :class, :string, default: "", doc: "additional CSS classes for the button"
+
+  def remove_item_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      class={"
+        #{@class} flex py-2 h-10 w-full mb-2 inline-flex justify-center w-full
+        rounded-lg border border-surface-300 shadow-sm px-4 py-2 text-sm font-medium dark:border-surface-600
+        dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
+        items-center hover:bg-surface-50"}
+      {@rest}
+    >
+      <.icon name="hero-minus" class="h-4 w-4" />{@label}
+    </button>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do
@@ -661,5 +795,78 @@ defmodule AshAdmin.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  attr :class, :string, default: "", doc: "additional CSS classes for the card"
+
+  def page_title(assigns) do
+    ~H"""
+    <h1 class={["text-2xl font-display font-extrabold tracking-tight text-balance", @class]}>
+      {render_slot(@inner_block)}
+    </h1>
+    """
+  end
+
+  attr :class, :string, default: "", doc: "additional CSS classes for the card"
+
+  def card(assigns) do
+    ~H"""
+    <div class={[
+      "shadow-sm border border-surface-300 dark:border-surface-700 overflow-hidden sm:rounded-xl dark:bg-surface-900",
+      @class
+    ]}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  def dark_mode_toggle(assigns) do
+    ~H"""
+    <button
+      id="theme-toggle"
+      type="button"
+      phx-update="ignore"
+      phx-hook="DarkModeHook"
+      class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg text-sm p-2"
+    >
+      <svg
+        id="theme-toggle-dark-icon"
+        class="w-5 h-5 text-transparent hidden"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+      </svg>
+
+      <svg
+        id="theme-toggle-light-icon"
+        class="w-5 h-5 text-transparent"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+        >
+        </path>
+      </svg>
+    </button>
+
+    <script>
+      // Toggle early based on <html class="dark">
+      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+      if (themeToggleDarkIcon != null && themeToggleLightIcon != null) {
+        let dark = document.documentElement.classList.contains('dark');
+        const show = dark ? themeToggleDarkIcon : themeToggleLightIcon
+        const hide = dark ? themeToggleLightIcon : themeToggleDarkIcon
+        show.classList.remove('hidden', 'text-transparent');
+        hide.classList.add('hidden', 'text-transparent');
+      }
+    </script>
+    """
   end
 end

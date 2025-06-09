@@ -2,6 +2,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import topbar from "../vendor/topbar";
 import { LiveSocket } from "phoenix_live_view";
+import DarkModeHook from "./dark_mode"
 
 let socketPath =
   document.querySelector("html").getAttribute("phx-socket") || "/live";
@@ -10,6 +11,8 @@ let csrfToken = document
   .getAttribute("content");
 let Hooks = {};
 const editors = {};
+
+Hooks.DarkModeHook = DarkModeHook
 
 Hooks.JsonEditor = {
   mounted() {
@@ -244,6 +247,34 @@ let liveSocket = new LiveSocket(socketPath, Socket, {
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
+
+window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
+  // Enable server log streaming to client. Disable with reloader.disableServerLogs()
+  reloader.enableServerLogs()
+
+  // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
+  // 
+  //   VSCode: export PLUG_EDITOR="vscode://file/__FILE__:__LINE__"
+  //   WSL VSCode: PLUG_EDITOR=vscode://vscode-remote/wsl+[DISTRO]__FILE__:__LINE__ replace [DISTRO]
+  //
+  //   * click with "c" key pressed to open at caller location
+  //   * click with "d" key pressed to open at function component definition location
+  let keyDown
+  window.addEventListener("keydown", e => keyDown = e.key)
+  window.addEventListener("keyup", e => keyDown = null)
+  window.addEventListener("click", e => {
+    if (keyDown === "c") {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      reloader.openEditorAtCaller(e.target)
+    } else if (keyDown === "d") {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      reloader.openEditorAtDef(e.target)
+    }
+  }, true)
+  window.liveReloader = reloader
+})
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();

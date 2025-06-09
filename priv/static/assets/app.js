@@ -70,12 +70,9 @@
             };
         })();
         var canvas, currentProgress, showing, progressTimerId = null, fadeTimerId = null, delayTimerId = null, addEvent = function(elem, type, handler) {
-          if (elem.addEventListener)
-            elem.addEventListener(type, handler, false);
-          else if (elem.attachEvent)
-            elem.attachEvent("on" + type, handler);
-          else
-            elem["on" + type] = handler;
+          if (elem.addEventListener) elem.addEventListener(type, handler, false);
+          else if (elem.attachEvent) elem.attachEvent("on" + type, handler);
+          else elem["on" + type] = handler;
         }, options = {
           autoRun: true,
           barThickness: 3,
@@ -114,29 +111,23 @@
           style.top = style.left = style.right = style.margin = style.padding = 0;
           style.zIndex = 100001;
           style.display = "none";
-          if (options.className)
-            canvas.classList.add(options.className);
+          if (options.className) canvas.classList.add(options.className);
           document2.body.appendChild(canvas);
           addEvent(window2, "resize", repaint);
         }, topbar2 = {
           config: function(opts) {
             for (var key in opts)
-              if (options.hasOwnProperty(key))
-                options[key] = opts[key];
+              if (options.hasOwnProperty(key)) options[key] = opts[key];
           },
           show: function(delay) {
-            if (showing)
-              return;
+            if (showing) return;
             if (delay) {
-              if (delayTimerId)
-                return;
+              if (delayTimerId) return;
               delayTimerId = setTimeout(() => topbar2.show(), delay);
             } else {
               showing = true;
-              if (fadeTimerId !== null)
-                window2.cancelAnimationFrame(fadeTimerId);
-              if (!canvas)
-                createCanvas();
+              if (fadeTimerId !== null) window2.cancelAnimationFrame(fadeTimerId);
+              if (!canvas) createCanvas();
               canvas.style.opacity = 1;
               canvas.style.display = "block";
               topbar2.progress(0);
@@ -151,8 +142,7 @@
             }
           },
           progress: function(to) {
-            if (typeof to === "undefined")
-              return currentProgress;
+            if (typeof to === "undefined") return currentProgress;
             if (typeof to === "string") {
               to = (to.indexOf("+") >= 0 || to.indexOf("-") >= 0 ? currentProgress : 0) + parseFloat(to);
             }
@@ -163,8 +153,7 @@
           hide: function() {
             clearTimeout(delayTimerId);
             delayTimerId = null;
-            if (!showing)
-              return;
+            if (!showing) return;
             showing = false;
             if (progressTimerId != null) {
               window2.cancelAnimationFrame(progressTimerId);
@@ -200,8 +189,7 @@
   (function() {
     var PolyfillEvent = eventConstructor();
     function eventConstructor() {
-      if (typeof window.CustomEvent === "function")
-        return window.CustomEvent;
+      if (typeof window.CustomEvent === "function") return window.CustomEvent;
       function CustomEvent2(event, params2) {
         params2 = params2 || { bubbles: false, cancelable: false, detail: void 0 };
         var evt = document.createEvent("CustomEvent");
@@ -223,10 +211,8 @@
       form.method = element.getAttribute("data-method") === "get" ? "get" : "post";
       form.action = to;
       form.style.display = "none";
-      if (target)
-        form.target = target;
-      else if (targetModifierKey)
-        form.target = "_blank";
+      if (target) form.target = target;
+      else if (targetModifierKey) form.target = "_blank";
       form.appendChild(csrf);
       form.appendChild(method);
       document.body.appendChild(form);
@@ -236,8 +222,7 @@
     }
     window.addEventListener("click", function(e) {
       var element = e.target;
-      if (e.defaultPrevented)
-        return;
+      if (e.defaultPrevented) return;
       while (element && element.getAttribute) {
         var phoenixLinkEvent = new PolyfillEvent("phoenix.link.click", {
           "bubbles": true,
@@ -1854,18 +1839,18 @@
     canPushState() {
       return typeof history.pushState !== "undefined";
     },
-    dropLocal(localStorage, namespace, subkey) {
-      return localStorage.removeItem(this.localKey(namespace, subkey));
+    dropLocal(localStorage2, namespace, subkey) {
+      return localStorage2.removeItem(this.localKey(namespace, subkey));
     },
-    updateLocal(localStorage, namespace, subkey, initial, func) {
-      let current = this.getLocal(localStorage, namespace, subkey);
+    updateLocal(localStorage2, namespace, subkey, initial, func) {
+      let current = this.getLocal(localStorage2, namespace, subkey);
       let key = this.localKey(namespace, subkey);
       let newVal = current === null ? initial : func(current);
-      localStorage.setItem(key, JSON.stringify(newVal));
+      localStorage2.setItem(key, JSON.stringify(newVal));
       return newVal;
     },
-    getLocal(localStorage, namespace, subkey) {
-      return JSON.parse(localStorage.getItem(this.localKey(namespace, subkey)));
+    getLocal(localStorage2, namespace, subkey) {
+      return JSON.parse(localStorage2.getItem(this.localKey(namespace, subkey)));
     },
     updateCurrentState(callback) {
       if (!this.canPushState()) {
@@ -7263,11 +7248,52 @@ removing illegal node: "${(childNode.outerHTML || childNode.nodeValue).trim()}"
     }
   };
 
+  // js/dark_mode.js
+  var localStorageKey = "theme";
+  var isDark = () => {
+    if (localStorage.getItem(localStorageKey) === "dark") return true;
+    if (localStorage.getItem(localStorageKey) === "light") return false;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  };
+  var setupThemeToggle = () => {
+    toggleVisibility = (dark) => {
+      const themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
+      const themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
+      if (themeToggleDarkIcon == null || themeToggleLightIcon == null) return;
+      const show = dark ? themeToggleDarkIcon : themeToggleLightIcon;
+      const hide = dark ? themeToggleLightIcon : themeToggleDarkIcon;
+      show.classList.remove("hidden", "text-transparent");
+      hide.classList.add("hidden", "text-transparent");
+      if (dark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      try {
+        localStorage.setItem(localStorageKey, dark ? "dark" : "light");
+      } catch (_err) {
+      }
+    };
+    toggleVisibility(isDark());
+    document.getElementById("theme-toggle").addEventListener("click", function() {
+      toggleVisibility(!isDark());
+    });
+  };
+  var darkModeHook = {
+    mounted() {
+      setupThemeToggle();
+    },
+    updated() {
+    }
+  };
+  var dark_mode_default = darkModeHook;
+
   // js/app.js
   var socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live";
   var csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
   var Hooks2 = {};
   var editors = {};
+  Hooks2.DarkModeHook = dark_mode_default;
   Hooks2.JsonEditor = {
     mounted() {
       const inputId = this.el.getAttribute("data-input-id");
@@ -7487,6 +7513,24 @@ removing illegal node: "${(childNode.outerHTML || childNode.nodeValue).trim()}"
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
   window.addEventListener("phx:page-loading-start", (_info) => import_topbar.default.show(300));
   window.addEventListener("phx:page-loading-stop", (_info) => import_topbar.default.hide());
+  window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
+    reloader.enableServerLogs();
+    let keyDown;
+    window.addEventListener("keydown", (e) => keyDown = e.key);
+    window.addEventListener("keyup", (e) => keyDown = null);
+    window.addEventListener("click", (e) => {
+      if (keyDown === "c") {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        reloader.openEditorAtCaller(e.target);
+      } else if (keyDown === "d") {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        reloader.openEditorAtDef(e.target);
+      }
+    }, true);
+    window.liveReloader = reloader;
+  });
   liveSocket.connect();
   liveSocket.enableDebug();
   window.liveSocket = liveSocket;

@@ -43,14 +43,12 @@ defmodule AshAdmin.Components.Resource.Form do
 
   def render(assigns) do
     ~H"""
-    <div class="md:pt-10 sm:mt-0 bg-gray-300 min-h-screen">
-      <div class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
-        <div class="mt-5 md:mt-0 md:col-span-2">
-          {render_form(assigns)}
-        </div>
+    <div class="p-0 md:p-8">
+      <div>
+        {render_form(assigns)}
       </div>
 
-      <div :if={@type != :create} class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
+      <div :if={@type != :create} class="mt-4">
         <div class="mt-5 md:mt-0 md:col-span-2">
           {AshAdmin.Components.Resource.Show.render_show(
             assigns,
@@ -85,78 +83,84 @@ defmodule AshAdmin.Components.Resource.Form do
 
   defp render_form(assigns) do
     ~H"""
-    <div class="shadow-lg overflow-hidden sm:rounded-md bg-white">
-      <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-red-500">
-        <ul>
-          <li :for={{field, message} <- all_errors(@form)}>
-            <span :if={field}>
-              {field}:
-            </span>
-            <span>
-              {message}
-            </span>
-          </li>
-        </ul>
-      </div>
-      <h1 class="text-lg mt-2 ml-4">
-        {String.capitalize(to_string(@action.type))} {AshAdmin.Resource.name(@resource)}
-      </h1>
-      <div class="flex justify-between col-span-6 mr-4 mt-2 overflow-auto px-4">
-        <AshAdmin.Components.Resource.SelectTable.table
-          resource={@resource}
-          action={@action}
-          on_change="change_table"
-          polymorphic_actions={@polymorphic_actions}
-          target={@myself}
-          table={@table}
-          tables={@tables}
-        />
-        <.form
-          :let={form}
-          as={:action}
-          for={to_form(%{}, as: :action)}
-          phx-change="change_action"
-          phx-target={@myself}
-          id="_action_form"
-        >
-          <label for="action">Action</label>
-          <.input
-            type="select"
-            field={form[:action]}
-            disabled={Enum.count(actions(@resource, @type)) <= 1}
-            options={actions(@resource, @type)}
-            value={to_string(@action.name)}
+    <.card>
+      <div class="m-8">
+        <.page_title class="mb-8">
+          {String.capitalize(to_string(@action.type))} {AshAdmin.Resource.name(@resource)}
+        </.page_title>
+        <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-rose-500">
+          <ul>
+            <li :for={{field, message} <- all_errors(@form)}>
+              <span :if={field}>
+                {to_name(field)}:
+              </span>
+              <span>
+                {message}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex justify-between col-span-6 mr-4 mt-2 overflow-auto px-4">
+          <AshAdmin.Components.Resource.SelectTable.table
+            resource={@resource}
+            action={@action}
+            on_change="change_table"
+            polymorphic_actions={@polymorphic_actions}
+            target={@myself}
+            table={@table}
+            tables={@tables}
           />
-        </.form>
-      </div>
-      <div class="px-4 py-5 sm:p-6">
-        <.form
-          :let={form}
-          for={@form}
-          phx-change="validate"
-          phx-submit="save"
-          phx-target={@myself}
-          autocomplete={false}
-          id="form"
-        >
-          <.input
-            :for={kv <- form.hidden}
-            name={form.name <> "[#{elem(kv, 0)}]"}
-            value={elem(kv, 1)}
-            type="hidden"
-          />
-          {render_attributes(assigns, @resource, @action, form)}
-          <div class="px-4 py-3 text-right sm:px-6">
-            <button
-              type="submit"
-              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+
+          <div :if={Enum.count(actions(@resource, @type)) > 1}>
+            <.form
+              :let={form}
+              as={:action}
+              for={to_form(%{}, as: :action)}
+              phx-change="change_action"
+              phx-target={@myself}
+              id="_action_form"
             >
-              {save_button_text(@type)}
-            </button>
+              <label for="action">Action</label>
+              <.input
+                type="select"
+                field={form[:action]}
+                disabled={Enum.count(actions(@resource, @type)) <= 1}
+                options={actions(@resource, @type)}
+                value={to_string(@action.name)}
+              />
+            </.form>
           </div>
-        </.form>
+        </div>
+        <div>
+          <.form
+            :let={form}
+            for={@form}
+            phx-change="validate"
+            phx-submit="save"
+            phx-target={@myself}
+            autocomplete={false}
+            id="form"
+          >
+            <.input
+              :for={kv <- form.hidden}
+              name={form.name <> "[#{elem(kv, 0)}]"}
+              value={elem(kv, 1)}
+              type="hidden"
+            />
+            {render_attributes(assigns, @resource, @action, form)}
+            <div class="flex pt-3 justify-end">
+              <button
+                type="submit"
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
+              >
+                {save_button_text(@type)}
+              </button>
+            </div>
+          </.form>
+        </div>
       </div>
-    </div>
+    </.card>
     """
   end
 
@@ -183,7 +187,7 @@ defmodule AshAdmin.Components.Resource.Form do
     ~H"""
     <% {attributes, flags, bottom_attributes, relationship_args} =
       attributes(@resource, @action, @exactly) %>
-    <div class="grid grid-cols-6 gap-6">
+    <div class="grid grid-cols-6 gap-6 mb-2">
       <div
         :for={attribute <- Enum.reject(attributes, &(is_nil(@exactly) && &1.name in @skip))}
         class={
@@ -196,12 +200,7 @@ defmodule AshAdmin.Components.Resource.Form do
         }
       >
         <div>
-          <label
-            class="block text-sm font-medium text-gray-700"
-            for={@form.name <> "[#{attribute.name}]"}
-          >
-            {to_name(attribute)}
-          </label>
+          <.attribute_label form={@form} attribute={attribute} />
           {render_attribute_input(assigns, attribute, @form)}
           <.error_tag
             :for={{error, vars} <- Keyword.get_values(@form.errors || [], attribute.name)}
@@ -213,9 +212,7 @@ defmodule AshAdmin.Components.Resource.Form do
       </div>
     </div>
     <div :if={!Enum.empty?(flags)} class="hidden sm:block" aria-hidden="true">
-      <div class="py-5">
-        <div class="border-t border-gray-200" />
-      </div>
+      <.separator />
     </div>
     <div :if={!Enum.empty?(flags)} class="grid grid-cols-6 gap-6">
       <div
@@ -228,12 +225,7 @@ defmodule AshAdmin.Components.Resource.Form do
           ])
         }
       >
-        <label
-          class="block text-sm font-medium text-gray-700"
-          for={@form.name <> "[#{attribute.name}]"}
-        >
-          {to_name(attribute.name)}
-        </label>
+        <.attribute_label form={@form} attribute={attribute} />
         {render_attribute_input(assigns, attribute, @form)}
         <.error_tag
           :for={{error, vars} <- Keyword.get_values(@form.errors || [], attribute.name)}
@@ -244,9 +236,7 @@ defmodule AshAdmin.Components.Resource.Form do
       </div>
     </div>
     <div :if={!Enum.empty?(bottom_attributes)} class="hidden sm:block" aria-hidden="true">
-      <div class="py-5">
-        <div class="border-t border-gray-200" />
-      </div>
+      <.separator />
     </div>
     <div :if={!Enum.empty?(bottom_attributes)} class="grid grid-cols-6 gap-6">
       <div
@@ -260,12 +250,7 @@ defmodule AshAdmin.Components.Resource.Form do
           ])
         }
       >
-        <label
-          class="block text-sm font-medium text-gray-700"
-          for={@form.name <> "[#{attribute.name}]"}
-        >
-          {to_name(attribute.name)}
-        </label>
+        <.attribute_label form={@form} attribute={attribute} />
         {render_attribute_input(assigns, attribute, @form)}
         <.error_tag
           :for={{error, vars} <- Keyword.get_values(@form.errors || [], attribute.name)}
@@ -277,12 +262,8 @@ defmodule AshAdmin.Components.Resource.Form do
     </div>
     <div :for={{relationship, argument, opts} <- relationship_args}>
       <%= if relationship not in @skip and argument.name not in @skip do %>
-        <label
-          class="block text-sm font-medium text-gray-700"
-          for={@form.name <> "[#{argument.name}]"}
-        >
-          {to_name(argument.name)}
-        </label>
+        <.argument_label form={@form} argument={argument} />
+
         {render_relationship_input(
           assigns,
           Ash.Resource.Info.relationship(@form.source.resource, relationship),
@@ -298,7 +279,7 @@ defmodule AshAdmin.Components.Resource.Form do
   @spec error_tag(any()) :: Phoenix.LiveView.Rendered.t()
   def error_tag(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
+    <p class="mb-3 flex gap-3 text-sm leading-6 text-rose-600">
       {render_slot(@inner_block)}
     </p>
     """
@@ -362,7 +343,7 @@ defmodule AshAdmin.Components.Resource.Form do
     ~H"""
     <div :if={!must_load?(@opts) || loaded?(@form.source.source, @relationship.name)}>
       <.inputs_for :let={inner_form} field={@form[@argument.name]}>
-        <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-red-500">
+        <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-rose-600">
           <ul>
             <li :for={{field, message} <- AshPhoenix.Form.errors(inner_form.source)}>
               <span :if={field}>
@@ -400,76 +381,71 @@ defmodule AshAdmin.Components.Resource.Form do
             )}
           </.inputs_for>
         <% end %>
-        {render_attributes(
-          assigns,
-          inner_form.source.resource,
-          inner_form.source.source.action,
-          inner_form,
-          @exactly_fields || relationship_fields(inner_form),
-          skip_related(@exactly_fields, @relationship)
-        )}
 
-        <button
-          :if={can_remove_related?(inner_form, @opts)}
-          type="button"
-          phx-click="remove_form"
-          phx-target={@myself}
-          phx-value-path={inner_form.name}
-          class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-        >
-          <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-        </button>
+        <.depth_marker>
+          <.remove_item_button
+            :if={can_remove_related?(inner_form, @opts)}
+            type="button"
+            phx-click="remove_form"
+            phx-target={@myself}
+            phx-value-path={inner_form.name}
+            label={"Remove #{String.trim_trailing(to_name(inner_form.name), "s")}"}
+            class="mb-2 "
+          />
+
+          {render_attributes(
+            assigns,
+            inner_form.source.resource,
+            inner_form.source.source.action,
+            inner_form,
+            @exactly_fields || relationship_fields(inner_form),
+            skip_related(@exactly_fields, @relationship)
+          )}
+        </.depth_marker>
       </.inputs_for>
-      <button
+      <.button
         :if={can_add_related?(@form, :read_action, @argument)}
-        type="button"
         phx-click="add_form"
         phx-target={@myself}
         phx-value-path={@form.name <> "[#{@argument.name}]"}
         phx-value-type="lookup"
         phx-value-cardinality={to_string(@relationship.cardinality)}
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       >
-        <.icon name="hero-magnifying-glass-circle" class="h-4 w-4 text-gray-500" />
-      </button>
+        <.icon name="hero-magnifying-glass-circle" class="h-4 w-4" />
+        <p class="ml-1">Search</p>
+      </.button>
 
-      <button
+      <.button
         :if={can_add_related?(@form, :create_action, @argument)}
-        type="button"
         phx-click="add_form"
         phx-target={@myself}
         phx-value-path={@form.name <> "[#{@argument.name}]"}
         phx-value-type="create"
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       >
-        <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-      </button>
-      <button
+        <.icon name="hero-plus" class="h-4 w-4" />
+      </.button>
+      <.button
         :if={
           @form.source.form_keys[@argument.name][:read_form] &&
             !relationship_set?(@form.source.source, @relationship.name, @argument.name)
         }
-        type="button"
         phx-click="add_form"
         phx-target={@myself}
         phx-value-path={@form.name <> "[#{@argument.name}]"}
         phx-value-type="lookup"
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       >
-        <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-      </button>
+        <.icon name="hero-plus" class="h-4 w-4" />
+      </.button>
     </div>
     <div :if={must_load?(@opts) && !loaded?(@form.source.source, @relationship.name)}>
-      <button
+      <.button
         phx-click="load"
         phx-target={@myself}
         phx-value-path={@form.name}
         phx-value-relationship={@relationship.name}
-        type="button"
-        class="flex py-2 ml-4 px-4 mt-2 bg-indigo-600 text-white border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       >
         Load
-      </button>
+      </.button>
       <div :if={is_exception(@load_errors[@relationship.name])}>
         {Exception.message(@load_errors[@relationship.name])}
       </div>
@@ -694,6 +670,7 @@ defmodule AshAdmin.Components.Resource.Form do
       value={value(@value, @form, @attribute)}
       name={@name || @form.name <> "[#{@attribute.name}]"}
       id={@id || @form.id <> "_#{@attribute.name}"}
+      class="my-2"
     />
     """
   end
@@ -743,7 +720,7 @@ defmodule AshAdmin.Components.Resource.Form do
         name: name,
         id: id,
         upload_key: upload_key,
-        upload: assigns[:uploads][upload_key],
+        upload: assigns.uploads[upload_key],
         uploaded_file: Map.get(assigns.uploaded_files, upload_key)
       )
 
@@ -758,7 +735,7 @@ defmodule AshAdmin.Components.Resource.Form do
           phx-value-upload-key={@upload_key}
           class="px-3 py-2.5 bg-gray-100 hover:bg-gray-200"
         >
-          <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
+          <.icon name="hero-minus" class="h-4 w-4" />
         </button>
       </div>
     <% else %>
@@ -849,27 +826,30 @@ defmodule AshAdmin.Components.Resource.Form do
           data-target-id={@form.id <> "_#{@attribute.name}"}
           class="prose max-w-none"
         >
-          <textarea
+          <.input
+            type="textarea"
             id={@id || @id || @form.id <> "_#{@attribute.name}"}
             class="prose max-w-none"
             name={@name || @form.name <> "[#{@attribute.name}]"}
-          ><%= value(@value, @form, @attribute) || "" %></textarea>
+          >
+            {value(@value, @form, @attribute) || ""}
+          </.input>
         </div>
       <% long_text?(@resource, @attribute) -> %>
-        <textarea
+        <.input
+          type="textarea"
           id={@id || @form.id <> "_#{@attribute.name}"}
           name={@name || @form.name <> "[#{@attribute.name}]"}
-          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md resize-y"
           phx-hook="MaintainAttrs"
           data-attrs="style"
           placeholder={placeholder(@default)}
-        ><%= value(@value, @form, @attribute) %></textarea>
+          value={value(@value, @form, @attribute)}
+        />
       <% short_text?(@resource, @attribute) -> %>
         <.input
           type={text_input_type(@resource, @attribute)}
           id={@id || @form.id <> "_#{@attribute.name}"}
           value={value(@value, @form, @attribute)}
-          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
           name={@name || @form.name <> "[#{@attribute.name}]"}
           placeholder={placeholder(@default)}
         />
@@ -891,7 +871,6 @@ defmodule AshAdmin.Components.Resource.Form do
           placeholder={placeholder(@default)}
           id={@id || @form.id <> "_#{@attribute.name}"}
           value={value(@value, @form, @attribute)}
-          class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
           name={@name || @form.name <> "[#{@attribute.name}]"}
         />
     <% end %>
@@ -923,7 +902,6 @@ defmodule AshAdmin.Components.Resource.Form do
       type="number"
       id={@id || @form.id <> "_#{@attribute.name}"}
       value={value(@value, @form, @attribute)}
-      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
       name={@name || @form.name <> "[#{@attribute.name}]"}
       placeholder={placeholder(@default)}
     />
@@ -962,6 +940,7 @@ defmodule AshAdmin.Components.Resource.Form do
         phx-update="ignore"
         data-input-id={@form.id <> "_#{@attribute.name}"}
         id={if @id, do: @id <> "_json", else: @form.id <> "_#{@attribute.name}_json"}
+        class="my-2"
       />
 
       <.input
@@ -971,20 +950,13 @@ defmodule AshAdmin.Components.Resource.Form do
         value={@encoded}
         name={@name || @form.name <> "[#{@attribute.name}]"}
         id={@id || @form.id <> "_#{@attribute.name}"}
-        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
       />
     </div>
     """
   rescue
     _ ->
       ~H"""
-      <.input
-        type="text"
-        disabled
-        value="..."
-        name={@name || @form.name <> "[#{@attribute.name}]"}
-        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-      />
+      <.input type="text" disabled value="..." name={@name || @form.name <> "[#{@attribute.name}]"} />
       """
   end
 
@@ -1094,7 +1066,7 @@ defmodule AshAdmin.Components.Resource.Form do
     <div class={if !is_nil(@actual_union_value), do: "border", else: ""}>
       <label
         :if={!is_nil(@actual_union_value)}
-        class="block text-sm font-medium text-gray-700"
+        class="block text-sm font-medium"
         for={@union_type_name}
       >
         Type
@@ -1153,39 +1125,38 @@ defmodule AshAdmin.Components.Resource.Form do
               value={elem(kv, 1)}
               type="hidden"
             />
-            <button
-              type="button"
-              phx-click="remove_form"
-              phx-target={@myself}
-              phx-value-path={inner_form.name}
-              class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-            >
-              <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-            </button>
 
-            {render_attributes(
-              assigns,
-              inner_form.source.resource,
-              inner_form.source.source.action,
-              %{
-                inner_form
-                | id: nested_form_id(@id, @form.id, @attribute.name, inner_form),
-                  name: nested_form_name(@name, @form.name, @attribute.name, inner_form)
-              }
-            )}
+            <.depth_marker>
+              <.remove_item_button
+                phx-click="remove_form"
+                phx-target={@myself}
+                phx-value-path={inner_form.name}
+                label={"Remove #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+                class="mb-2 "
+              />
+
+              {render_attributes(
+                assigns,
+                inner_form.source.resource,
+                inner_form.source.source.action,
+                %{
+                  inner_form
+                  | id: nested_form_id(@id, @form.id, @attribute.name, inner_form),
+                    name: nested_form_name(@name, @form.name, @attribute.name, inner_form)
+                }
+              )}
+            </.depth_marker>
           </.inputs_for>
-          <button
+
+          <.add_item_button
             :if={can_append_embed?(@form.source, @attribute.name, @attribute.type)}
-            type="button"
             phx-click="add_form"
             phx-target={@myself}
             phx-value-pkey={embedded_type_pkey(@attribute.type)}
             phx-value-union-type={@union_type}
             phx-value-path={@form.name <> "[#{@attribute.name}]"}
-            class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-          >
-            <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-          </button>
+            label={"Add #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+          />
         <% Ash.Type.embedded_type?(@attribute.type) && match?([%AshPhoenix.Form{} | _], @value) -> %>
           <%= for inner_form <- Enum.map(@value, &to_form/1) do %>
             <.input
@@ -1194,15 +1165,56 @@ defmodule AshAdmin.Components.Resource.Form do
               value={elem(kv, 1)}
               type="hidden"
             />
-            <button
-              type="button"
+
+            <.depth_marker>
+              <.remove_item_button
+                phx-click="remove_form"
+                phx-target={@myself}
+                phx-value-path={inner_form.name}
+                label={"Remove #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+                class="mb-2 "
+              />
+
+              {render_attributes(
+                assigns,
+                inner_form.source.resource,
+                inner_form.source.source.action,
+                %{
+                  inner_form
+                  | id: @id || @form.id <> "_#{@attribute.name}",
+                    name: @name || @form.name <> "[#{@attribute.name}]"
+                }
+              )}
+            </.depth_marker>
+          <% end %>
+          <.button
+            :if={can_append_embed?(@form.source, @attribute.name, @attribute.type)}
+            type="button"
+            phx-click="add_form"
+            phx-target={@myself}
+            phx-value-union-type={@union_type}
+            phx-value-pkey={embedded_type_pkey(@attribute.type)}
+            phx-value-path={@form.name <> "[#{@attribute.name}]"}
+          >
+            <.icon name="hero-plus" class="h-4 w-4" />
+          </.button>
+        <% Ash.Type.embedded_type?(@attribute.type) && match?(%AshPhoenix.Form{}, @value) -> %>
+          <% inner_form = to_form(@value) %>
+          <.input
+            :for={kv <- inner_form.hidden}
+            name={inner_form.name <> "[#{elem(kv, 0)}]"}
+            value={elem(kv, 1)}
+            type="hidden"
+          />
+
+          <.depth_marker>
+            <.remove_item_button
               phx-click="remove_form"
               phx-target={@myself}
               phx-value-path={inner_form.name}
-              class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-            >
-              <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-            </button>
+              label={"Remove #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+              class="mb-2 "
+            />
 
             {render_attributes(
               assigns,
@@ -1214,47 +1226,7 @@ defmodule AshAdmin.Components.Resource.Form do
                   name: @name || @form.name <> "[#{@attribute.name}]"
               }
             )}
-          <% end %>
-          <button
-            :if={can_append_embed?(@form.source, @attribute.name, @attribute.type)}
-            type="button"
-            phx-click="add_form"
-            phx-target={@myself}
-            phx-value-union-type={@union_type}
-            phx-value-pkey={embedded_type_pkey(@attribute.type)}
-            phx-value-path={@form.name <> "[#{@attribute.name}]"}
-            class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-          >
-            <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-          </button>
-        <% Ash.Type.embedded_type?(@attribute.type) && match?(%AshPhoenix.Form{}, @value) -> %>
-          <% inner_form = to_form(@value) %>
-          <.input
-            :for={kv <- inner_form.hidden}
-            name={inner_form.name <> "[#{elem(kv, 0)}]"}
-            value={elem(kv, 1)}
-            type="hidden"
-          />
-
-          <button
-            type="button"
-            phx-click="remove_form"
-            phx-target={@myself}
-            phx-value-path={inner_form.name}
-            class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-          >
-            <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-          </button>
-          {render_attributes(
-            assigns,
-            inner_form.source.resource,
-            inner_form.source.source.action,
-            %{
-              inner_form
-              | id: @id || @form.id <> "_#{@attribute.name}",
-                name: @name || @form.name <> "[#{@attribute.name}]"
-            }
-          )}
+          </.depth_marker>
         <% Ash.Type.embedded_type?(@attribute.type) && match?(%{source: %AshPhoenix.FilterForm.Arguments{}}, @form) -> %>
           {"AshPhoenix.FilterForm doesn't support embedded yet"}
         <% Ash.Type.embedded_type?(@attribute.type) -> %>
@@ -1265,39 +1237,38 @@ defmodule AshAdmin.Components.Resource.Form do
               value={elem(kv, 1)}
               type="hidden"
             />
-            <button
-              type="button"
-              phx-click="remove_form"
-              phx-target={@myself}
-              phx-value-path={inner_form.name}
-              class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-            >
-              <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-            </button>
 
-            {render_attributes(
-              assigns,
-              inner_form.source.resource,
-              inner_form.source.source.action,
-              %{
-                inner_form
-                | id: @id || @form.id <> "_#{@attribute.name}",
-                  name: @name || @form.name <> "[#{@attribute.name}]"
-              }
-            )}
+            <.depth_marker>
+              <.remove_item_button
+                phx-click="remove_form"
+                phx-target={@myself}
+                phx-value-path={inner_form.name}
+                label={"Remove #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+                class="mb-2 "
+              />
+
+              {render_attributes(
+                assigns,
+                inner_form.source.resource,
+                inner_form.source.source.action,
+                %{
+                  inner_form
+                  | id: @id || @form.id <> "_#{@attribute.name}",
+                    name: @name || @form.name <> "[#{@attribute.name}]"
+                }
+              )}
+            </.depth_marker>
           </.inputs_for>
-          <button
+
+          <.add_item_button
             :if={can_append_embed?(@form.source, @attribute.name, @attribute.type)}
-            type="button"
             phx-click="add_form"
             phx-target={@myself}
             phx-value-union-type={@union_type}
             phx-value-pkey={embedded_type_pkey(@attribute.type)}
             phx-value-path={@form.name <> "[#{@attribute.name}]"}
-            class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-          >
-            <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-          </button>
+            label={"Add #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+          />
         <% is_atom(@attribute.type) && function_exported?(@attribute.type, :values, 0) -> %>
           <.input
             type="select"
@@ -1359,38 +1330,36 @@ defmodule AshAdmin.Components.Resource.Form do
         {this_value, index} <-
           Enum.with_index(list_value(@value || value(@value, @form, @attribute)))
       }>
-        {render_attribute_input(
-          assigns,
-          %{@attribute | type: @type, constraints: @attribute.constraints[:items] || []},
-          @form,
-          {:list_value, this_value},
-          @name <> "[#{index}]",
-          @id <> "_#{index}",
-          @union_type
-        )}
-        <button
-          type="button"
-          phx-click="remove_value"
-          phx-target={@myself}
-          phx-value-path={@form.name}
-          phx-value-field={@attribute.name}
-          phx-value-index={index}
-          class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-        >
-          <.icon name="hero-minus" class="h-4 w-4 text-gray-500" />
-        </button>
+        <div class="flex w-full items-center">
+          <div class="grow">
+            {render_attribute_input(
+              assigns,
+              %{@attribute | type: @type, constraints: @attribute.constraints[:items] || []},
+              @form,
+              {:list_value, this_value},
+              @name <> "[#{index}]",
+              @id <> "_#{index}",
+              @union_type
+            )}
+          </div>
+          <.small_remove_button
+            phx-click="remove_value"
+            phx-target={@myself}
+            phx-value-path={@form.name}
+            phx-value-field={@attribute.name}
+            phx-value-index={index}
+          />
+        </div>
       </div>
-      <button
-        type="button"
+
+      <.add_item_button
         phx-click="append_value"
         phx-target={@myself}
         phx-value-path={@form.name}
         phx-value-field={@attribute.name}
         phx-value-union-type={@union_type}
-        class="flex h-6 w-6 mt-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-      >
-        <.icon name="hero-plus" class="h-4 w-4 text-gray-500" />
-      </button>
+        label={"Add #{String.trim_trailing(to_name(@attribute.name), "s")}"}
+      />
     </div>
     """
   end
@@ -1412,7 +1381,6 @@ defmodule AshAdmin.Components.Resource.Form do
       value={@value}
       name={@name || @form.name <> "[#{@attribute.name}]"}
       id={@id || @form.id <> "_#{@attribute.name}"}
-      class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
     />
     """
   rescue
@@ -1428,7 +1396,6 @@ defmodule AshAdmin.Components.Resource.Form do
             value={@value}
             name={@name || @form.name <> "[#{@attribute.name}]"}
             id={@id || @form.id <> "_#{@attribute.name}"}
-            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
           />
           """
 
@@ -1440,7 +1407,6 @@ defmodule AshAdmin.Components.Resource.Form do
             value="..."
             name={@name || @form.name <> "[#{@attribute.name}]"}
             id={@id || @form.id <> "_#{@attribute.name}"}
-            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
           />
           """
       end

@@ -104,6 +104,7 @@ defmodule AshAdmin.PageLive do
       polymorphic_actions={@polymorphic_actions}
       prefix={@prefix}
     />
+    <AshAdmin.CoreComponents.dark_mode_toggle />
     """
   end
 

@@ -20,9 +20,11 @@ config :ash_admin, DemoWeb.Endpoint,
   pubsub_server: Demo.PubSub,
   server: true
 
+config :logger, truncate: :infinity
+
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.17.11",
+  version: "0.25.5",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -32,7 +34,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.3.2",
+  version: "4.0.9",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -51,6 +53,8 @@ if config_env() == :dev do
       Demo.Accounts.Domain,
       Demo.Tickets.Domain
     ]
+
+  config :phoenix_live_view, debug_heex_annotations: true
 
   config :git_ops,
     mix_project: AshAdmin.MixProject,

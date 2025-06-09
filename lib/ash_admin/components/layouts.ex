@@ -18,8 +18,15 @@ defmodule AshAdmin.Layouts do
   def render("root.html", assigns) do
     ~H"""
     <!DOCTYPE html>
-    <html lang="en" phx-socket={live_socket_path(@conn)}>
+    <html lang="en" phx-socket={live_socket_path(@conn)} class="dark">
       <head>
+        <script>
+          if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+          } else {
+          document.documentElement.classList.remove('dark')
+          }
+        </script>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
@@ -47,7 +54,7 @@ defmodule AshAdmin.Layouts do
         <script nonce={csp_nonce(@conn, :script)} src="https://unpkg.com/easymde/dist/easymde.min.js">
         </script>
       </head>
-      <body>
+      <body class="bg-white dark:bg-black dark:text-white">
         {@inner_content}
       </body>
       <script nonce={csp_nonce(@conn, :script)}>

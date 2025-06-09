@@ -4,6 +4,8 @@ defmodule AshAdmin.Components.Resource.DataTable do
 
   import AshAdmin.Helpers
   import AshPhoenix.LiveView
+  import AshAdmin.CoreComponents
+
   alias AshAdmin.Components.Resource.Table
 
   attr :resource, :atom
@@ -22,13 +24,13 @@ defmodule AshAdmin.Components.Resource.DataTable do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="sm:mt-0 bg-gray-300 min-h-screen">
+      <div>
         <div
           :if={@action.arguments != []}
           class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:pt-10 mb-10"
         >
           <div class="md:mt-0 md:col-span-2">
-            <div class="shadow-lg overflow-hidden pt-2 sm:rounded-md bg-white">
+            <.card>
               <div class="px-4 sm:p-6">
                 <.form
                   :let={form}
@@ -39,7 +41,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
                   phx-submit="save"
                   phx-target={@myself}
                 >
-                  <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-red-500">
+                  <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-rose-600">
                     <ul>
                       <li :for={{field, message} <- all_errors(form)}>
                         <span :if={field}>
@@ -67,7 +69,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
                   </div>
                 </.form>
               </div>
-            </div>
+            </.card>
           </div>
         </div>
 

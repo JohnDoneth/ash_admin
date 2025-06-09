@@ -130,6 +130,13 @@ defmodule AshAdmin.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:jason, "~> 1.0"},
       {:gettext, "~> 0.26"},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.2.0",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1},
       # Dev dependencies
       {:igniter, "~> 0.5", only: [:dev, :test]},
       {:simple_sat, "~> 0.1", only: [:dev, :test]},

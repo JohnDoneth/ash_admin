@@ -25,7 +25,7 @@ defmodule AshAdmin.Components.Resource do
 
   def render(assigns) do
     ~H"""
-    <div class="h-screen">
+    <div class="h-min-screen">
       <Nav.nav resource={@resource} domain={@domain} action={@action} table={@table} prefix={@prefix} />
       <div class="mx-24 relative grid grid-cols-1 justify-items-center"></div>
       <div :if={@record && match?({:error, error} when not is_nil(error), @record)}>

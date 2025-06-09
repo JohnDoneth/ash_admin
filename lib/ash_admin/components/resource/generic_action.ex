@@ -17,7 +17,7 @@ defmodule AshAdmin.Components.Resource.GenericAction do
 
   def render(assigns) do
     ~H"""
-    <div class="sm:mt-0 bg-gray-300 min-h-screen">
+    <div class="sm:mt-0 bg-gray-300">
       <%= if Enum.empty?(@action.arguments) do %>
         <.form
           :let={form}
@@ -28,7 +28,7 @@ defmodule AshAdmin.Components.Resource.GenericAction do
           phx-submit="save"
           phx-target={@myself}
         >
-          <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-red-500">
+          <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-rose-600">
             <ul>
               <li :for={{field, message} <- all_errors(form)}>
                 <span :if={field}>
@@ -67,7 +67,7 @@ defmodule AshAdmin.Components.Resource.GenericAction do
                 phx-submit="save"
                 phx-target={@myself}
               >
-                <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-red-500">
+                <div :if={form.source.submitted_once?} class="ml-4 mt-4 text-rose-600">
                   <ul>
                     <li :for={{field, message} <- all_errors(form)}>
                       <span :if={field}>

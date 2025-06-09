@@ -1,7 +1,9 @@
 defmodule AshAdmin.Components.TopNav do
   @moduledoc false
   use Phoenix.LiveComponent
+
   import AshAdmin.Helpers
+  import AshAdmin.CoreComponents
 
   alias AshAdmin.Components.TopNav.{
     ActorSelect,
@@ -30,14 +32,14 @@ defmodule AshAdmin.Components.TopNav do
 
   def render(assigns) do
     ~H"""
-    <nav phx-keydown="close" phx-key="escape" class="bg-gray-800" phx-target={@myself}>
+    <nav phx-keydown="close" phx-key="escape" class="bg-black" phx-target={@myself}>
       <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center w-full">
             <div class="flex-shrink-0">
-              <h3 class="text-white text-lg">
+              <h3 class="text-white text-lg font-display font-bold tracking-wide">
                 <.link navigate={@prefix}>
-                  Admin
+                  Ash Admin
                 </.link>
               </h3>
             </div>
