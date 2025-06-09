@@ -227,11 +227,15 @@ defmodule AshAdmin.CoreComponents do
     <button
       type={@type}
       class={[
-        "flex py-2 h-10 w-full mt-2 inline-flex justify-center w-full
-        rounded-lg border border-surface-300 shadow-sm px-4 py-2 text-sm font-medium dark:border-surface-600
-        dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
-        items-center hover:bg-surface-50",
-        @class
+        "flex py-2 h-10 mt-2 inline-flex justify-center
+        rounded-lg shadow-sm px-4 py-2 text-sm font-medium
+        items-center",
+        @class,
+        classes(
+          "bg-brand hover:bg-brand/90 text-white": @type == "submit",
+          "w-full border border-surface-300 hover:bg-surface-50 dark:border-surface-600 dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700":
+            @type != "submit"
+        )
       ]}
       {@rest}
     >
