@@ -36,6 +36,7 @@ defmodule AshAdmin.Helpers do
   end
 
   def to_name(:id), do: "ID"
+  def to_name("id"), do: "ID"
 
   def to_name(%{__struct__: Ash.Resource.Attribute, related_resource: resource} = attribute)
       when not is_nil(resource) do

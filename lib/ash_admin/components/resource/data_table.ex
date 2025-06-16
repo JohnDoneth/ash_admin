@@ -59,10 +59,8 @@ defmodule AshAdmin.Components.Resource.DataTable do
                     @action,
                     form
                   )}
-                  <div class="px-4 py-3 text-right sm:px-6">
-                    <.button
-                      type="submit"
-                    >
+                  <div class="pl-4 py-3 text-right">
+                    <.button type="submit">
                       Run Query
                     </.button>
                   </div>
@@ -89,7 +87,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
         </div>
 
         <div :if={@action.arguments == [] || @params["args"]} class="h-full overflow-auto md:mx-4">
-          <div class="shadow-lg overflow-auto sm:rounded-md bg-white">
+          <div class="shadow-lg overflow-auto sm:rounded-md">
             <div :if={match?({:error, _}, @data) && @action.arguments == []}>
               <ul>
                 <%= for {path, error} <- AshPhoenix.Form.errors(@query, for_path: :all) do %>
@@ -426,7 +424,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
       :if={(offset?(@data) || keyset?(@data)) && show_pagination_links?(@data, @placement)}
       class="w-5/6 mx-auto"
     >
-      <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
         <div class="flex-1 flex justify-between sm:hidden">
           <button
             :if={!(keyset?(@data) && is_nil(@params["page"])) && prev_page?(@data)}
@@ -537,7 +535,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
     assigns = assign(assigns, :small, small?)
 
     ~H"""
-    <p class={classes(["text-sm text-gray-700", "sm:hidden": @small])}>
+    <p class={classes(["text-sm", "sm:hidden": @small])}>
       <span :if={offset?(@data)}>
         Showing <span class="font-medium">{first(@data)}</span>
         to <span class="font-medium">{last(@data)}</span>

@@ -63,7 +63,7 @@ defmodule AshAdmin.Components.Resource.Show do
         <div>
           <div>
             {render_attributes(assigns, @record, @resource)}
-            <div :if={@buttons} class="px-4 py-3 text-right sm:px-6">
+            <div :if={@buttons} class="px-4 py-3 text-right">
               <.link
                 :if={destroy?(@resource)}
                 navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=destroy&table=#{@table}&primary_key=#{encode_primary_key(@record)}"}

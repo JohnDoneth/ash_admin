@@ -83,7 +83,7 @@ defmodule AshAdmin.Components.Resource.GenericAction do
                   @action,
                   form
                 )}
-                <div class="px-4 py-3 text-right sm:px-6 my-auto">
+                <div class="pl-4 py-3 text-right sm:px-6 my-auto">
                   <.button type="submit">
                     Run
                   </.button>

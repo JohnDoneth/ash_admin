@@ -83,81 +83,77 @@ defmodule AshAdmin.Components.Resource.Form do
 
   defp render_form(assigns) do
     ~H"""
-    <.card>
-      <div class="m-8">
-        <.page_title class="mb-8">
-          {String.capitalize(to_string(@action.type))} {AshAdmin.Resource.name(@resource)}
-        </.page_title>
-        <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-rose-500">
-          <ul>
-            <li :for={{field, message} <- all_errors(@form)}>
-              <span :if={field}>
-                {to_name(field)}:
-              </span>
-              <span>
-                {message}
-              </span>
-            </li>
-          </ul>
-        </div>
+    <.card class="p-8">
+      <.page_title class="mb-8">
+        {String.capitalize(to_string(@action.type))} {AshAdmin.Resource.name(@resource)}
+      </.page_title>
+      <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-rose-500">
+        <ul>
+          <li :for={{field, message} <- all_errors(@form)}>
+            <span :if={field}>
+              {to_name(field)}:
+            </span>
+            <span>
+              {message}
+            </span>
+          </li>
+        </ul>
+      </div>
 
-        <div class="flex justify-between col-span-6 mr-4 mt-2 overflow-auto px-4">
-          <AshAdmin.Components.Resource.SelectTable.table
-            resource={@resource}
-            action={@action}
-            on_change="change_table"
-            polymorphic_actions={@polymorphic_actions}
-            target={@myself}
-            table={@table}
-            tables={@tables}
-          />
+      <div class="flex justify-between col-span-6 mr-4 mt-2 overflow-auto px-4">
+        <AshAdmin.Components.Resource.SelectTable.table
+          resource={@resource}
+          action={@action}
+          on_change="change_table"
+          polymorphic_actions={@polymorphic_actions}
+          target={@myself}
+          table={@table}
+          tables={@tables}
+        />
 
-          <div :if={Enum.count(actions(@resource, @type)) > 1}>
-            <.form
-              :let={form}
-              as={:action}
-              for={to_form(%{}, as: :action)}
-              phx-change="change_action"
-              phx-target={@myself}
-              id="_action_form"
-            >
-              <label for="action">Action</label>
-              <.input
-                type="select"
-                field={form[:action]}
-                disabled={Enum.count(actions(@resource, @type)) <= 1}
-                options={actions(@resource, @type)}
-                value={to_string(@action.name)}
-              />
-            </.form>
-          </div>
-        </div>
-        <div>
+        <div :if={Enum.count(actions(@resource, @type)) > 1}>
           <.form
             :let={form}
-            for={@form}
-            phx-change="validate"
-            phx-submit="save"
+            as={:action}
+            for={to_form(%{}, as: :action)}
+            phx-change="change_action"
             phx-target={@myself}
-            autocomplete={false}
-            id="form"
+            id="_action_form"
           >
+            <label for="action">Action</label>
             <.input
-              :for={kv <- form.hidden}
-              name={form.name <> "[#{elem(kv, 0)}]"}
-              value={elem(kv, 1)}
-              type="hidden"
+              type="select"
+              field={form[:action]}
+              disabled={Enum.count(actions(@resource, @type)) <= 1}
+              options={actions(@resource, @type)}
+              value={to_string(@action.name)}
             />
-            {render_attributes(assigns, @resource, @action, form)}
-            <div class="flex pt-3 justify-end">
-              <.button
-                type="submit"
-              >
-                {save_button_text(@type)}
-              </.button>
-            </div>
           </.form>
         </div>
+      </div>
+      <div>
+        <.form
+          :let={form}
+          for={@form}
+          phx-change="validate"
+          phx-submit="save"
+          phx-target={@myself}
+          autocomplete={false}
+          id="form"
+        >
+          <.input
+            :for={kv <- form.hidden}
+            name={form.name <> "[#{elem(kv, 0)}]"}
+            value={elem(kv, 1)}
+            type="hidden"
+          />
+          {render_attributes(assigns, @resource, @action, form)}
+          <div class="flex pt-3 justify-end">
+            <.button type="submit">
+              {save_button_text(@type)}
+            </.button>
+          </div>
+        </.form>
       </div>
     </.card>
     """
