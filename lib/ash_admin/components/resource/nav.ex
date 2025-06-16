@@ -12,7 +12,7 @@ defmodule AshAdmin.Components.Resource.Nav do
 
   def nav(assigns) do
     ~H"""
-    <nav class="bg-black w-full">
+    <nav class="bg-black w-full dark:bg-surface-900 border-b border-surface-700">
       <div class="px-4 sm:px-6 lg:px-8 w-full">
         <div class="flex items-center justify-between h-16 w-full">
           <div class="flex items-center w-full">

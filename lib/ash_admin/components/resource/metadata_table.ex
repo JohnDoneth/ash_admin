@@ -10,7 +10,7 @@ defmodule AshAdmin.Components.Resource.MetadataTable do
   def attribute_table(assigns) do
     ~H"""
     <div :if={Enum.any?(attributes(@resource))}>
-      <CoreComponents.page_title class="mb-8">Attributes</CoreComponents.page_title>
+      <CoreComponents.page_title class="mb-4">Attributes</CoreComponents.page_title>
       <CoreComponents.table id="attributes" rows={attributes(@resource)}>
         <:col :let={attribute} label="Name">
           <p title={attribute.description} class="font-mono">{attribute.name}</p>
@@ -47,7 +47,7 @@ defmodule AshAdmin.Components.Resource.MetadataTable do
         name={if @value, do: "hero-check", else: "hero-x-mark"}
         class={[
           "stroke-4 h-5 w-5",
-          if(@value, do: "text-green-600 dark:text-green-400", else: "text-rose-500/40")
+          if(@value, do: "text-green-600 dark:text-green-400", else: "text-brand/70")
         ]}
       />
     </div>
@@ -61,10 +61,10 @@ defmodule AshAdmin.Components.Resource.MetadataTable do
   def relationship_table(assigns) do
     ~H"""
     <div :if={Enum.any?(relationships(@resource))} class="w-full">
-      <CoreComponents.page_title class="mt-8">Relationships</CoreComponents.page_title>
+      <CoreComponents.page_title class="mt-12 mb-4">Relationships</CoreComponents.page_title>
       <CoreComponents.table id="attributes" rows={relationships(@resource)}>
         <:col :let={relationship} label="Name" scope="row">
-          <p title={relationship.description} class="font-mono">
+          <p class="font-mono">
             {relationship.name}
           </p>
         </:col>
@@ -80,6 +80,9 @@ defmodule AshAdmin.Components.Resource.MetadataTable do
           >
             {AshAdmin.Resource.name(relationship.destination)}
           </.link>
+        </:col>
+        <:col :let={relationship} label="Description">
+          {relationship.description || "-"}
         </:col>
       </CoreComponents.table>
     </div>

@@ -32,7 +32,12 @@ defmodule AshAdmin.Components.TopNav do
 
   def render(assigns) do
     ~H"""
-    <nav phx-keydown="close" phx-key="escape" class="bg-black" phx-target={@myself}>
+    <nav
+      phx-keydown="close"
+      phx-key="escape"
+      class="bg-black dark:bg-surface-900"
+      phx-target={@myself}
+    >
       <div class="px-4 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center w-full">

@@ -424,13 +424,13 @@ defmodule AshAdmin.Components.Resource.DataTable do
       :if={(offset?(@data) || keyset?(@data)) && show_pagination_links?(@data, @placement)}
       class="w-5/6 mx-auto"
     >
-      <div class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div class="px-4 py-3 flex items-center justify-between sm:px-6">
         <div class="flex-1 flex justify-between sm:hidden">
           <button
             :if={!(keyset?(@data) && is_nil(@params["page"])) && prev_page?(@data)}
             phx-target={@myself}
             phx-click="prev_page"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
+            class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
           >
             Previous
           </button>
@@ -439,7 +439,7 @@ defmodule AshAdmin.Components.Resource.DataTable do
             :if={next_page?(@data)}
             phx-click="next_page"
             phx-target={@myself}
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
+            class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
           >
             Next
           </button>

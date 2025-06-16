@@ -553,6 +553,7 @@ defmodule AshAdmin.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :class, :string, required: false
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -604,6 +605,23 @@ defmodule AshAdmin.CoreComponents do
         </tbody>
       </table>
     </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :rest, :global
+
+  def link_button(assigns) do
+    ~H"""
+    <.link
+      class={[
+        "inline-flex items-center rounded-md border border-surface-300 bg-white px-3 py-2 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-surface-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand w-full",
+        @class
+      ]}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.link>
     """
   end
 
