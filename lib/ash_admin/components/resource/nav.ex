@@ -20,22 +20,23 @@ defmodule AshAdmin.Components.Resource.Nav do
               <h3 class="text-white text-lg">
                 <.link
                   navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}"}
-                  class="font-display font-bold tracking-wide"
+                  class="font-display font-bold tracking-wide underline underline-offset-4 decoration-2 decoration-surface-500 hover:decoration-surface-300"
                 >
                   {AshAdmin.Resource.name(@resource)}
                 </.link>
               </h3>
             </div>
             <div class="w-full">
-              <div class="ml-12 flex items-center space-x-1">
+              <div class="ml-10 flex items-center space-x-1">
                 <div :if={has_create_action?(@resource)} class="relative">
                   <.link
                     navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=create&action=#{create_action(@resource).name}&table=#{@table}"}
                     class={
                       classes([
-                        "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 dark:border-surface-500 dark:bg-surface-800",
-                        "bg-black hover:bg-gray-900 text-white": @action && @action.type == :create,
-                        "bg-white text-gray-700 hover:bg-gray-300":
+                        "inline-flex justify-center w-full rounded-md border border-surface-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-brand dark:border-surface-500 dark:bg-surface-800",
+                        "bg-black hover:bg-surface-900 text-white":
+                          @action && @action.type == :create,
+                        "bg-white text-surface-700 hover:bg-surface-300":
                           !@action || @action.type != :create
                       ])
                     }

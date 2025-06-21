@@ -33,29 +33,30 @@ defmodule AshAdmin.Components.Resource.Table do
 
     <%!-- <.page_title class="mb-4">{AshAdmin.Resource.name(@resource)}</.page_title> --%>
 
-    <.card :for={record <- @data} class="px-4 py-2 mb-4">
-      <div class="flex">
-        <table class="w-full table-auto text-left">
-          <tbody class="relative divide-y divide-surface-200 dark:divide-surface-800 text-sm leading-6">
-            <%= for attribute <- attributes(@resource, @attributes, @skip) do %>
-              <tr>
-                <td class="py-2 pr-6 pb-1 font-bold text-nowrap tracking-wide">
-                  {to_name(attribute.name)}
-                </td>
-                <td class="relative py-2 w-full">
-                  {render_attribute(
-                    @domain,
-                    record,
-                    attribute,
-                    @format_fields,
-                    @show_sensitive_fields,
-                    @actor,
-                    @relationship_name
-                  )}
-                </td>
-              </tr>
-            <% end %>
-            <%!-- <td :if={@actions && actions?(@resource)}>
+    <div class="grid gap-y-4 px-2 mb-4">
+      <.card :for={record <- @data} class="px-4 py-2 mb-4">
+        <div class="flex">
+          <table class="w-full table-auto text-left">
+            <tbody class="relative divide-y divide-surface-200 dark:divide-surface-800 text-sm leading-6">
+              <%= for attribute <- attributes(@resource, @attributes, @skip) do %>
+                <tr>
+                  <td class="py-2 pr-6 pb-1 font-bold text-nowrap tracking-wide">
+                    {to_name(attribute.name)}
+                  </td>
+                  <td class="relative py-2 w-full">
+                    {render_attribute(
+                      @domain,
+                      record,
+                      attribute,
+                      @format_fields,
+                      @show_sensitive_fields,
+                      @actor,
+                      @relationship_name
+                    )}
+                  </td>
+                </tr>
+              <% end %>
+              <%!-- <td :if={@actions && actions?(@resource)}>
                 <div class="flex h-max justify-items-center">
                   <div :if={AshAdmin.Resource.show_action(@resource)}>
                     <.link navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&table=#{@table}&primary_key=#{encode_primary_key(record)}&action_type=read"}>
@@ -86,38 +87,38 @@ defmodule AshAdmin.Components.Resource.Table do
                   </.button>
                 </div>
               </td> --%>
-          </tbody>
-        </table>
-        <div class="ml-4 flex flex-col gap-y-2">
-          <div :if={AshAdmin.Resource.show_action(@resource)}>
-            <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&table=#{@table}&primary_key=#{encode_primary_key(record)}&action_type=read"}>
-              <.icon name="hero-information-circle-solid" class="h-5 w-5 mr-2" /> View
-            </.link_button>
-          </div>
+            </tbody>
+          </table>
+          <div class="ml-4 flex flex-col gap-y-2">
+            <div :if={AshAdmin.Resource.show_action(@resource)}>
+              <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&table=#{@table}&primary_key=#{encode_primary_key(record)}&action_type=read"}>
+                <.icon name="hero-information-circle-solid" class="h-5 w-5 mr-2" /> View
+              </.link_button>
+            </div>
 
-          <div :if={AshAdmin.Helpers.primary_action(@resource, :update)}>
-            <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=update&table=#{@table}&primary_key=#{encode_primary_key(record)}"}>
-              <.icon name="hero-pencil-solid" class="h-5 w-5 mr-2" /> Edit
-            </.link_button>
-          </div>
+            <div :if={AshAdmin.Helpers.primary_action(@resource, :update)}>
+              <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=update&table=#{@table}&primary_key=#{encode_primary_key(record)}"}>
+                <.icon name="hero-pencil-solid" class="h-5 w-5 mr-2" /> Edit
+              </.link_button>
+            </div>
 
-          <div :if={AshAdmin.Helpers.primary_action(@resource, :destroy)}>
-            <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=destroy&table=#{@table}&primary_key=#{encode_primary_key(record)}"}>
-              <.icon name="hero-x-circle-solid" class="h-5 w-5 mr-2" /> Delete
-            </.link_button>
-          </div>
+            <div :if={AshAdmin.Helpers.primary_action(@resource, :destroy)}>
+              <.link_button navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=destroy&table=#{@table}&primary_key=#{encode_primary_key(record)}"}>
+                <.icon name="hero-x-circle-solid" class="h-5 w-5 mr-2" /> Delete
+              </.link_button>
+            </div>
 
-          <.button
-            :if={AshAdmin.Resource.actor?(@resource)}
-            phx-click="set_actor"
-            phx-value-resource={@resource}
-            phx-value-domain={@domain}
-            phx-value-pkey={encode_primary_key(record)}
-          >
-            <.icon name="hero-key-solid" class=" h-5 w-5 mr-2" /> Set Actor
-          </.button>
+            <.button
+              :if={AshAdmin.Resource.actor?(@resource)}
+              phx-click="set_actor"
+              phx-value-resource={@resource}
+              phx-value-domain={@domain}
+              phx-value-pkey={encode_primary_key(record)}
+            >
+              <.icon name="hero-key-solid" class=" h-5 w-5 mr-2" /> Set Actor
+            </.button>
 
-          <%!-- <.button>
+            <%!-- <.button>
             <.icon name="hero-information-circle-solid" class="h-5 w-5 mr-1 bg-surface-500" /> Read
           </.button>
           <.button>
@@ -129,10 +130,10 @@ defmodule AshAdmin.Components.Resource.Table do
           <.button>
             <.icon name="hero-key-solid" class="h-5 w-5 mr-1 bg-surface-500" /> Set Actor
           </.button> --%>
+          </div>
         </div>
-      </div>
 
-      <%!-- <div :if={@actions && actions?(@resource)}>
+        <%!-- <div :if={@actions && actions?(@resource)}>
         <div class="flex h-max justify-items-center">
           <div :if={AshAdmin.Resource.show_action(@resource)}>
             <.link navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&table=#{@table}&primary_key=#{encode_primary_key(record)}&action_type=read"}>
@@ -162,7 +163,8 @@ defmodule AshAdmin.Components.Resource.Table do
             <.icon name="hero-key-solid" class="h-5 w-5" />
           </.button>
         </div> --%>
-    </.card>
+      </.card>
+    </div>
 
     <%!-- <table class="w-full table-auto text-left">
       <thead class="text-left border-b-1 border-surface-300 dark:border-surface-700 text-sm text-left leading-6">

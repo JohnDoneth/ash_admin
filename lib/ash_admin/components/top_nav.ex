@@ -35,7 +35,7 @@ defmodule AshAdmin.Components.TopNav do
     <nav
       phx-keydown="close"
       phx-key="escape"
-      class="bg-black dark:bg-surface-900"
+      class="bg-black dark:bg-surface-900 border-b border-surface-800 w-full"
       phx-target={@myself}
     >
       <div class="px-4 lg:px-8">
@@ -63,6 +63,7 @@ defmodule AshAdmin.Components.TopNav do
                   />
                 </div>
                 <div class="ml-10 flex items-center">
+                  <AshAdmin.CoreComponents.dark_mode_toggle class="mr-2" />
                   <ActorSelect.actor_select
                     :if={@actor_resources != []}
                     actor_resources={@actor_resources}
@@ -89,6 +90,7 @@ defmodule AshAdmin.Components.TopNav do
             </div>
           </div>
           <div class="-mr-2 flex md:hidden">
+            <AshAdmin.CoreComponents.dark_mode_toggle class="mr-2" />
             <.button phx-click="toggle" phx-target={@myself}>
               <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path

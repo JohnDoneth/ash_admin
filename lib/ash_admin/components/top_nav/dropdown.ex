@@ -17,7 +17,7 @@ defmodule AshAdmin.Components.TopNav.Dropdown do
           type="button"
           class={
             classes([
-              "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500",
+              "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-brand",
               "bg-black hover:bg-gray-900 text-white": @active,
               "bg-white text-gray-700 hover:bg-gray-300": !@active
             ])

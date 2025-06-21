@@ -75,7 +75,7 @@ defmodule AshAdmin.Components.Resource.MetadataTable do
         </:col>
         <:col :let={relationship} label="Destination">
           <.link
-            class="font-mono"
+            class="font-mono underline underline-offset-2 decoration-2 decoration-surface-400 hover:decoration-surface-300"
             navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(relationship.domain || Ash.Resource.Info.domain(relationship.destination) || @domain)}&resource=#{AshAdmin.Resource.name(relationship.destination)}"}
           >
             {AshAdmin.Resource.name(relationship.destination)}

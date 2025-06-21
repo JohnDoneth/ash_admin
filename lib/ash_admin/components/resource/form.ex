@@ -87,7 +87,7 @@ defmodule AshAdmin.Components.Resource.Form do
       <.page_title class="mb-8">
         {String.capitalize(to_string(@action.type))} {AshAdmin.Resource.name(@resource)}
       </.page_title>
-      <div :if={@form.source.submitted_once?} class="ml-4 mt-4 text-rose-500">
+      <div :if={@form.source.submitted_once?} class="border rounded-md p-2 mt-4 text-rose-500">
         <ul>
           <li :for={{field, message} <- all_errors(@form)}>
             <span :if={field}>
@@ -744,7 +744,7 @@ defmodule AshAdmin.Components.Resource.Form do
         <%= if length(@upload.entries) > 0 do %>
           <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1 mt-1">
             <div
-              class="bg-indigo-600 h-1.5 rounded-full"
+              class="bg-brand h-1.5 rounded-full"
               data-progress={hd(@upload.entries).progress}
               style={"width: #{hd(@upload.entries).progress}%"}
             >

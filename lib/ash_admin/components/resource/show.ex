@@ -20,22 +20,12 @@ defmodule AshAdmin.Components.Resource.Show do
 
   def render(assigns) do
     ~H"""
-    <div class="md:pt-10 sm:mt-0 bg-gray-300 pb-20">
-      <div class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
-        <div class="mt-5 md:mt-0 md:col-span-2">
-          {render_show(assigns, @record, @resource)}
-        </div>
-      </div>
-      <div class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
-        <div class="mt-5 md:mt-0 md:col-span-2">
-          {render_calculations(assigns, @record, @resource)}
-        </div>
-      </div>
-      <div class="md:grid md:grid-cols-3 md:gap-6 md:mx-16 md:mt-10">
-        <div class="mt-5 md:mt-0 md:col-span-2">
-          {render_relationships(assigns, @record, @resource)}
-        </div>
-      </div>
+    <div class="p-8 grid gap-y-8">
+      {render_show(assigns, @record, @resource)}
+
+      {render_calculations(assigns, @record, @resource)}
+
+      {render_relationships(assigns, @record, @resource)}
     </div>
     """
   end
@@ -92,10 +82,7 @@ defmodule AshAdmin.Components.Resource.Show do
     assigns = assign(assigns, record: record, resource: resource)
 
     ~H"""
-    <div
-      :for={{calculation, calculation_form} <- @calculations}
-      class="shadow-lg overflow-hidden sm:rounded-md mb-2 bg-white"
-    >
+    <.card :for={{calculation, calculation_form} <- @calculations}>
       <div class="px-4 py-5 mt-2">
         <div>{to_name(calculation.name)}</div>
         <div :if={loaded?(@record, calculation.name)}>
@@ -139,7 +126,7 @@ defmodule AshAdmin.Components.Resource.Show do
           </.form>
         </div>
       </div>
-    </div>
+    </.card>
     """
   end
 
@@ -147,10 +134,7 @@ defmodule AshAdmin.Components.Resource.Show do
     assigns = assign(assigns, resource: resource)
 
     ~H"""
-    <div
-      :for={relationship <- AshAdmin.Components.Resource.Form.relationships(@resource, :show)}
-      class="shadow-lg overflow-hidden sm:rounded-md mb-2 bg-white"
-    >
+    <.card :for={relationship <- AshAdmin.Components.Resource.Form.relationships(@resource, :show)}>
       <div class="px-4 py-5 mt-2">
         <div>
           {to_name(relationship.name)}
@@ -178,7 +162,7 @@ defmodule AshAdmin.Components.Resource.Show do
           </div>
         </div>
       </div>
-    </div>
+    </.card>
     """
   end
 

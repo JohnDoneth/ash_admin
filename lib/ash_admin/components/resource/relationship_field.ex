@@ -147,8 +147,8 @@ defmodule AshAdmin.Components.Resource.RelationshipField do
               class={[
                 "cursor-pointer select-none relative py-2 px-2 w-full truncate",
                 if(index == @highlighted_index,
-                  do: "text-white bg-indigo-500",
-                  else: "text-gray-900 hover:bg-indigo-400 hover:text-gray-100"
+                  do: "text-white bg-brand",
+                  else: "text-gray-900 hover:bg-brand hover:text-gray-100"
                 )
               ]}
               role="option"

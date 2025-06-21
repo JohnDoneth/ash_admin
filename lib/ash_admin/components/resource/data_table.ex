@@ -86,7 +86,10 @@ defmodule AshAdmin.Components.Resource.DataTable do
           </div>
         </div>
 
-        <div :if={@action.arguments == [] || @params["args"]} class="h-full overflow-auto md:mx-4">
+        <div
+          :if={@action.arguments == [] || @params["args"]}
+          class="h-full overflow-auto md:mx-4 mt-8"
+        >
           <div class="shadow-lg overflow-auto sm:rounded-md">
             <div :if={match?({:error, _}, @data) && @action.arguments == []}>
               <ul>

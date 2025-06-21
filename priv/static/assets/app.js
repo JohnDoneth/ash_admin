@@ -7255,35 +7255,40 @@ removing illegal node: "${(childNode.outerHTML || childNode.nodeValue).trim()}"
     if (localStorage.getItem(localStorageKey) === "light") return false;
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   };
-  var setupThemeToggle = () => {
-    toggleVisibility = (dark) => {
-      const themeToggleDarkIcon = document.getElementById("theme-toggle-dark-icon");
-      const themeToggleLightIcon = document.getElementById("theme-toggle-light-icon");
-      if (themeToggleDarkIcon == null || themeToggleLightIcon == null) return;
-      const show = dark ? themeToggleDarkIcon : themeToggleLightIcon;
-      const hide = dark ? themeToggleLightIcon : themeToggleDarkIcon;
-      show.classList.remove("hidden", "text-transparent");
-      hide.classList.add("hidden", "text-transparent");
-      if (dark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-      try {
-        localStorage.setItem(localStorageKey, dark ? "dark" : "light");
-      } catch (_err) {
-      }
-    };
-    toggleVisibility(isDark());
-    document.getElementById("theme-toggle").addEventListener("click", function() {
-      toggleVisibility(!isDark());
-    });
+  var toggleVisibility = (dark) => {
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    try {
+      localStorage.setItem(localStorageKey, dark ? "dark" : "light");
+    } catch (_err) {
+    }
   };
   var darkModeHook = {
-    mounted() {
-      setupThemeToggle();
+    toggleButtons(dark) {
+      this.el.querySelectorAll("[data-light-icon]").forEach((el) => {
+        if (!dark) {
+          el.classList.remove("hidden");
+        } else {
+          el.classList.add("hidden");
+        }
+      });
+      this.el.querySelectorAll("[data-dark-icon]").forEach((el) => {
+        if (dark) {
+          el.classList.remove("hidden");
+        } else {
+          el.classList.add("hidden");
+        }
+      });
     },
-    updated() {
+    mounted() {
+      this.toggleButtons(!isDark());
+      this.el.addEventListener("click", () => {
+        toggleVisibility(!isDark());
+        this.toggleButtons(!isDark());
+      });
     }
   };
   var dark_mode_default = darkModeHook;

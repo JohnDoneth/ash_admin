@@ -1,4 +1,4 @@
-// From https://github.com/aiwaiwa/phoenix_dark_mode (MIT License)
+// Modified from https://github.com/aiwaiwa/phoenix_dark_mode (MIT License)
 const localStorageKey = 'theme';
 
 const isDark = () => {
@@ -7,34 +7,45 @@ const isDark = () => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-const setupThemeToggle = () => {
-    toggleVisibility = (dark) => {
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        if (themeToggleDarkIcon == null || themeToggleLightIcon == null) return;
-        const show = dark ? themeToggleDarkIcon : themeToggleLightIcon
-        const hide = dark ? themeToggleLightIcon : themeToggleDarkIcon
-        show.classList.remove('hidden', 'text-transparent');
-        hide.classList.add('hidden', 'text-transparent');
-        if (dark) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-        try { localStorage.setItem(localStorageKey, dark ? 'dark' : 'light') } catch (_err) { }
+const toggleVisibility = (dark) => {
+    if (dark) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
     }
-    toggleVisibility(isDark())
-    document.getElementById('theme-toggle').addEventListener('click', function () {
-        toggleVisibility(!isDark())
-    });
+    try { localStorage.setItem(localStorageKey, dark ? 'dark' : 'light') } catch (_err) { }
+
+
 }
 
+
 const darkModeHook = {
+    toggleButtons(dark) {
+        this.el.querySelectorAll('[data-light-icon]').forEach((el) => {
+            if (!dark) {
+                el.classList.remove('hidden')
+            } else {
+                el.classList.add('hidden')
+            }
+        });
+
+        this.el.querySelectorAll('[data-dark-icon]').forEach((el) => {
+            if (dark) {
+                el.classList.remove('hidden')
+            } else {
+                el.classList.add('hidden')
+            }
+        });
+    },
     mounted() {
-        setupThemeToggle();
-    },
-    updated() {
-    },
+        this.toggleButtons(!isDark());
+
+        this.el.addEventListener('click', () => {
+            toggleVisibility(!isDark());
+
+            this.toggleButtons(!isDark());
+        });
+    }
 }
 
 export default darkModeHook;

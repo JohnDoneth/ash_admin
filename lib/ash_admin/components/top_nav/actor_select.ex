@@ -3,6 +3,7 @@ defmodule AshAdmin.Components.TopNav.ActorSelect do
   use Phoenix.Component
 
   import AshAdmin.Helpers
+  import AshAdmin.CoreComponents, only: [link_button: 1]
 
   attr :authorizing, :boolean, required: true
   attr :actor_paused, :boolean, required: true
@@ -18,10 +19,19 @@ defmodule AshAdmin.Components.TopNav.ActorSelect do
 
   def actor_select(assigns) do
     ~H"""
-    <div id="actor-hook" class="flex items-center mr-5 text-white" phx-hook="Actor">
+    <div
+      id="actor-hook"
+      class="items-center mr-5 text-white border border-surface-700 cursor-pointer inline-flex rounded-md overflow-hidden"
+      phx-hook="Actor"
+    >
       <div>
         <span>
-          <button phx-click={@toggle_authorizing} type="button">
+          <button
+            phx-click={@toggle_authorizing}
+            type="button"
+            title="Toggle authorizing"
+            class="px-3 py-2.5 text-sm font-medium hover:bg-surface-800"
+          >
             <svg
               :if={@authorizing}
               width="1em"
@@ -109,7 +119,10 @@ defmodule AshAdmin.Components.TopNav.ActorSelect do
     assigns = assign(assigns, domain: domain, resource: resource)
 
     ~H"""
-    <.link navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=read"}>
+    <.link
+      class="px-2 border-l border-surface-700 py-2.5 hover:bg-surface-800 text-sm font-medium"
+      navigate={"#{@prefix}?domain=#{AshAdmin.Domain.name(@domain)}&resource=#{AshAdmin.Resource.name(@resource)}&action_type=read"}
+    >
       Set {AshAdmin.Resource.name(@resource)}
     </.link>
     """

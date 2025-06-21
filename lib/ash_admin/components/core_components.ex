@@ -274,7 +274,9 @@ defmodule AshAdmin.CoreComponents do
 
   def attribute_name(assigns) do
     ~H"""
-    <div class="block text-sm font-medium text-surface-700">{to_name(@attribute.name)}</div>
+    <div class="block text-sm font-medium text-surface-700 dark:text-surface-400">
+      {to_name(@attribute.name)}
+    </div>
     """
   end
 
@@ -284,8 +286,8 @@ defmodule AshAdmin.CoreComponents do
     ~H"""
     <button
       type="button"
-      class="flex ml-1 h-10 w-10 mt-2 border-gray-600 hover:bg-gray-400 border rounded-md justify-center items-center
-            shadow-sm rounded-lg border border-surface-300 font-medium dark:border-surface-600
+      class="flex ml-1 h-10 w-10 mt-2 rounded-lg justify-center items-center
+            shadow-sm border border-surface-300 font-medium dark:border-surface-600
             dark:bg-surface-800 cursor-pointer dark:hover:bg-surface-700
             hover:bg-surface-50"
       {@rest}
@@ -422,8 +424,8 @@ defmodule AshAdmin.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 p-2 block w-full rounded-lg border focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "mt-2 p-2 block w-full rounded-lg border sm:text-sm sm:leading-6 min-h-[6rem]",
+          @errors == [] && "border-surface-300 dark:border-surface-700 dark:focus:border-surface-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -625,6 +627,16 @@ defmodule AshAdmin.CoreComponents do
     """
   end
 
+  def single_column_layout(assigns) do
+    ~H"""
+    <div class="flex items-center justify-center">
+      <div class="w-full lg:w-3/5 2xl:w-2/5">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
+    """
+  end
+
   @doc """
   A table with dynamic columns and rows.
 
@@ -809,7 +821,7 @@ defmodule AshAdmin.CoreComponents do
         items-center hover:bg-surface-50"}
       {@rest}
     >
-      <.icon name="hero-minus" class="h-4 w-4" />{@label}
+      <.icon name="hero-minus" class="h-4 w-4 mr-1" />{@label}
     </button>
     """
   end
@@ -920,7 +932,7 @@ defmodule AshAdmin.CoreComponents do
   def card(assigns) do
     ~H"""
     <div class={[
-      "shadow-sm border border-surface-300 dark:border-surface-700 overflow-hidden sm:rounded-xl dark:bg-surface-900",
+      "shadow-sm md:border border-surface-300 dark:border-surface-700 overflow-hidden md:rounded-xl dark:bg-surface-900",
       @class
     ]}>
       {render_slot(@inner_block)}
@@ -928,18 +940,23 @@ defmodule AshAdmin.CoreComponents do
     """
   end
 
+  attr :class, :string, default: "", doc: "additional CSS classes for the dark mode toggle"
+
   def dark_mode_toggle(assigns) do
     ~H"""
     <button
-      id="theme-toggle"
+      id={"theme-toggle-#{System.unique_integer()}"}
       type="button"
       phx-update="ignore"
       phx-hook="DarkModeHook"
-      class="text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg text-sm p-2"
+      class={[
+        "text-white hover:bg-surface-800 dark:hover:bg-surface-800 rounded-lg border border-surface-700 text-sm p-2",
+        @class
+      ]}
     >
       <svg
-        id="theme-toggle-dark-icon"
-        class="w-5 h-5 text-transparent hidden"
+        data-dark-icon
+        class="w-5 h-5 hidden"
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -948,8 +965,8 @@ defmodule AshAdmin.CoreComponents do
       </svg>
 
       <svg
-        id="theme-toggle-light-icon"
-        class="w-5 h-5 text-transparent"
+        data-light-icon
+        class="w-5 h-5"
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -964,15 +981,25 @@ defmodule AshAdmin.CoreComponents do
     </button>
 
     <script>
-      // Toggle early based on <html class="dark">
-      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-      if (themeToggleDarkIcon != null && themeToggleLightIcon != null) {
-        let dark = document.documentElement.classList.contains('dark');
-        const show = dark ? themeToggleDarkIcon : themeToggleLightIcon
-        const hide = dark ? themeToggleLightIcon : themeToggleDarkIcon
-        show.classList.remove('hidden', 'text-transparent');
-        hide.classList.add('hidden', 'text-transparent');
+      if (window.dark == undefined) {
+        // Toggle early based on <html class="dark">
+        const dark = !document.documentElement.classList.contains('dark');
+
+        document.querySelectorAll('[data-light-icon]').forEach((el) => {
+          if (!dark) {
+              el.classList.remove('hidden')
+          } else {
+              el.classList.add('hidden')
+          }
+        });
+
+        document.querySelectorAll('[data-dark-icon]').forEach((el) => {
+          if (dark) {
+              el.classList.remove('hidden')
+          } else {
+              el.classList.add('hidden')
+          }
+        });
       }
     </script>
     """
